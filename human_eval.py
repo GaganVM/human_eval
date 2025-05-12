@@ -60,11 +60,13 @@ def main():
     
     # 3) URL extraction & keep checkboxes
     st.subheader("Extracted URLs")
-    urls = extract_urls(sample.get("combined_text",""))
+    urls = list(set(extract_urls(sample.get("combined_text", ""))))  # remove duplicates
     kept_urls = []
-    for url in urls:
-        url_hash = hashlib.md5(url.encode()).hexdigest()
-        keep = st.checkbox(f"{url}", value=True, key=f"url_{i}_{url_hash}")
+    
+    for j, url in enumerate(urls):
+        safe_hash = hashlib.md5(url.encode()).hexdigest()
+        unique_key = f"url_{i}_{j}_{safe_hash}"  # index ensures uniqueness
+        keep = st.checkbox(f"{url}", value=True, key=unique_key)
         if keep:
             st.write(f"[{url}]({url})")
             kept_urls.append(url)
